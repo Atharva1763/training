@@ -4,12 +4,14 @@ Collection of config objects used in the InstructLab training library.
 
 # Standard
 from enum import Enum
+from typing import Optional
 import os
 
 # Third Party
 from pydantic import BaseModel, ConfigDict, Field
 
 
+# public API
 class DeepSpeedOffloadStrategy(Enum):
     """
     Defines the offload strategy for DeepSpeed.
@@ -24,6 +26,7 @@ class DeepSpeedOffloadStrategy(Enum):
     NONE = None
 
 
+# public API
 class QuantizeDataType(Enum):
     """
     Defines what datatype we use during quantization.
@@ -34,6 +37,7 @@ class QuantizeDataType(Enum):
     NONE = None
 
 
+# public API
 class DataProcessArgs(BaseModel):
     """
     All the arguments consumed by the training data pre-process script.
@@ -49,6 +53,7 @@ class DataProcessArgs(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
 
+# public API
 class TorchrunArgs(BaseModel):
     """
     Representation of the arguments being used by torchrun.
@@ -63,6 +68,7 @@ class TorchrunArgs(BaseModel):
     rdzv_endpoint: str
 
 
+# public API
 class LoraOptions(BaseModel):
     """
     Options to specify when training using a LoRA.
@@ -81,6 +87,7 @@ class LoraOptions(BaseModel):
         use_enum_values = True
 
 
+# public API
 class DeepSpeedOptions(BaseModel):
     """
     Represents the available options we support when training with the DeepSpeed optimizer.
@@ -90,14 +97,15 @@ class DeepSpeedOptions(BaseModel):
     Defaults are all taken from the above docs.
     """
 
-    cpu_offload_optimizer: bool = False
+    cpu_offload_optimizer: Optional[bool] = False
     cpu_offload_optimizer_ratio: float = 1
-    cpu_offload_optimizer_pin_memory: bool = False
+    cpu_offload_optimizer_pin_memory: Optional[bool] = False
 
     # don't save in deepspeed format as a default
     save_samples: int | None = None
 
 
+# public API
 class TrainingArgs(BaseModel):
     """
     This class represents the arguments being used by the training script.
@@ -132,7 +140,7 @@ class TrainingArgs(BaseModel):
     is_padding_free: bool
     random_seed: int = 42
 
-    mock_data: bool = False
+    mock_data: Optional[bool] = False
     mock_data_len: int = 0
 
     deepspeed_options: DeepSpeedOptions = Field(
@@ -142,6 +150,8 @@ class TrainingArgs(BaseModel):
             cpu_offload_optimizer_pin_memory=False,
         )
     )
+
+    disable_flash_attn: Optional[bool] = False
 
     # TODO(osilkin): support quantized full fine-tuning:
     # https://github.com/instructlab/training/issues/28
